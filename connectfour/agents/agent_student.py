@@ -55,11 +55,45 @@ class StudentAgent(RandomAgent):
         return bestVal
 
     def evaluateBoardState(self, board):
+        #We store any the number of consecutive coloums found with a game piece for player one and two
+        playerTwoTwo = 0;
+        playerTwoThree = 0;
+        
+        playerOneTwo = 0;
+        playerOneThree = 0;
+
+        p2 = 2;
+        p1 = 1;
+        
+        for row in range(0, board.height):
+            for col in range(0, board.width -2):
+                if(board.get_cell_value(row, col) == p2 and board.get_cell_value(row, col + 1) == p2):
+                    if(board.get_cell_value(row, col + 2) == p2):
+                        playerTwoTotalThreeConsecutive += 1;
+                    else:
+                        playerTwoTotalTwoConsecutive += 1;
+                
 
         for row in range(0, board.height):
-            for col in range(0, board.width):                
-            	if(board.get_cell_value(row, col) == 2):
-                    return 1.0;
+            for col in range(0, board.width -2):
+                if(board.get_cell_value(row, col) == p1 and board.get_cell_value(row, col + 1) == p1):
+                    print(board.get_cell_value(row, col));
+                    if(board.get_cell_value(row, col + 2) == p1):
+                        playerOneTotalThreeConsecutive += 1;
+                    else:
+                        playerOneTotalTwoConsecutive += 1;
+                            
+
+        playerTwoScore = playerTwoTotalTwoConsecutive + playerTwoTotalThreeConsecutive * 1.75;
+        playerOneScore = playerOneTotalTwoConsecutive + playerOneTotalThreeConsecutive * 1.75;
+
+        print(playerOneTotalTwoConsecutive);
+        print("two = ", playerTwoScore);
+        print("one = ", playerOneScore);
+        print();
+                    
+#            	if(board.get_cell_value(row, col) == 2):
+ #                   return 1.0;
                 
         """
         Your evaluation function should look at the current state and return a score for it. 
@@ -92,5 +126,5 @@ class StudentAgent(RandomAgent):
             next_state(turn)
             winner()
         """
-        return -0.0;
+        return 0.5;             # 
 #        return random.uniform(0, 1)
