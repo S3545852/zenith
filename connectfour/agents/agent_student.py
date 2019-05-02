@@ -109,7 +109,7 @@ class StudentAgent(RandomAgent):
 #            return -1;           # This moves has three consecutive p1's and thus is bad for p2
         
 
-        ret = 0;
+        ret = 0
           
         if(p1Score > p2Score):
             ret = produce_range(p1Score)
@@ -127,6 +127,8 @@ class StudentAgent(RandomAgent):
 def produce_range(score):
     if(score <= 1000):
         score /= 1000;
+    else:
+        score = 1;
     return score;
 
 
