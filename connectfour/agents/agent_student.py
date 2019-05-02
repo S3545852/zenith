@@ -54,117 +54,83 @@ class StudentAgent(RandomAgent):
 
         return bestVal
 
+    
     def evaluateBoardState(self, board):
         #We store any the number of consecutive coloums found with a game piece for player one and two
-        playerTwoTwo = 0;
-        playerTwoThree = 0;
-        
-        playerOneTwo = 0;
-        playerOneThree = 0;
-
         p2 = 2;
         p1 = 1;
         win = -1;
-
-
         p1RowScore = 0;
         p1Score = 0;
         p2RowScore = 0;
         p2Score = 0;
 
-        for row in range(0, board.height):
-            p1RowScore = checkRow(board, row, win, True);
-            print("p1RowScore = ", p1RowScore)
-            p1Score += p1RowScore * p1RowScore;
-        for row in range(0, board.height):
-            p2RowScore = checkRow(board, row, win, False);
-            print("p2RowScore = ", p2RowScore)
-            p2Score += p2RowScore * p2RowScore;
-
-        print()
-            
-
-        if(p1Score == win and p2Score == win):
-            print("Draw move")
-            return 0.0;
-        if(p1Score == win):
-            print("p1 win")
-            return 1;
-        if(p2Score == win):
-            print("p2 win")
-            return -1;
-
-        if(p1Score > p2Score):
-            ret = normalize(p1Score, 0.0, p1Score) - normalize(p2Score, 0.0, p1Score)
-            print("ret = ", ret)
-            return ret
-        else:
-            if(p1Score == 0 and p2Score == 0):
-                return 0;
-            else:
-                ret = normalize(p2Score, 0.0, p2Score) - normalize(p1Score, 0.0, p2Score)
-                print("ret = ", ret)
-            return ret
-        
-            
-#           print(checkRow(board, row));
- #       print();
-
-
+#        for row in range(0, board.height):
+  #          p1RowScore = checkRow(board, row, win, True);
+ #           p1Score += p1RowScore * p1RowScore;
 
 #        for row in range(0, board.height):
-#            for col in range(0, board.width):
-#                ret = getPiecesInWiningRow(board, row, col, True);                
-#                if(ret != False):
-#                    if(ret == 2):
-#                        playerOneTwo += ret;
-#                    else:
-#                        playerOneThree += ret;
-#                if(col >= board.width):
-#                    break;
-                    
-#            	if(board.get_cell_value(row, col) == 2):
- #                   return 1.0;
-                
-        """
-        Your evaluation function should look at the current state and return a score for it. 
-        As an example, the random agent provided works as follows:
-            If the opponent has won this game, return -1.
-            If we have won the game, return 1.
-            If neither of the players has won, return a random number.
-        """
+          #p2RowScore = checkRow(board, row, win, False);
+         # p2Score += p2RowScore * p2RowScore;
 
-        """
-        These are the variables and functions for board objects which may be helpful when creating your Agent.
-        Look into board.py for more information/descriptions of each, or to look for any other definitions which may help you.
-
-        Board Variables:
-            board.width 
-            board.height
-            board.last_move
-            board.num_to_connect
-            board.winning_zones
-            board.score_array 
-            board.current_player_score
-
-        Board Functions:
-            get_cell_value(row, col)
-            try_move(col)
-            valid_move(row, col)
-            valid_moves()
-            terminal(self)
-            legal_moves()
-            next_state(turn)
-            winner()
-        """
-        return 0.5;             # 
-#        return random.uniform(0, 1)
-
-#returns false if row not a winable row
+        #p1Score =  p1Score / 50;
+        #p2Score = p2Score / 50;
 
 
+        for col in range(0, board.width):
+            p1ColScore = checkColumn(board, col, win, True);
+            p1Score += p1ColScore * p1ColScore;
+        for col in range(0, board.width):
+            p1ColScore = checkColumn(board, col, win, False);
+            p2Score += p2RowScore * p2RowScore;
 
-def checkRow(board, row, p1Turn, win):
+#        print("p1Score = ", p1Score)
+ #       print("p2Score = ", p2Score)
+
+#        if(checkFor3P1(board, p1)):
+ #           print("We have a bad move")
+  #          p1Score = 0
+   #         p2Score = 0
+    #        for row in range(0, board.height):
+     #           p1RowScore = checkRow(board, row, win, True);
+      #          p1Score += p1RowScore * p1RowScore;
+#
+ #           for row in range(0, board.height):
+  #              p2RowScore = checkRow(board, row, win, False);
+   #             p2Score += p2RowScore * p2RowScore;
+    #            
+     #       ret = 0;
+      #      if(p1Score > p2Score):
+       #         ret = produce_range(p1Score)
+        #    else:
+         #       if(p2Score > p1Score):
+          #          ret = -produce_range(p2Score)
+
+#            return -1;           # This moves has three consecutive p1's and thus is bad for p2
+        
+
+        ret = 0;
+          
+        if(p1Score > p2Score):
+            ret = produce_range(p1Score)
+        else:
+            if(p2Score > p1Score):
+                ret = -produce_range(p2Score)
+
+
+#        print("ret = ", ret)
+ #       print()
+
+        return ret;
+
+    
+def produce_range(score):
+    if(score <= 1000):
+        score /= 1000;
+    return score;
+
+
+def checkRow(board, row, win, p1Turn):
     score = 0;              # If currRow == winRowLen return -1, else return score
     winRowLen = 4;
     p1 = 1;
@@ -177,15 +143,10 @@ def checkRow(board, row, p1Turn, win):
         else:
             currRow = checkRowInner(board, row, winRowLen, c, p2, p1)
         if(currRow == winRowLen):
-            print("currRow = ", currRow)
             return win;    # This is a wining move!
-    score += currRow;
-
-    print("score = ", score)
-    return score;
+        score += currRow;
         
-
-            
+    return score;
 	
 
 def checkRowInner(board, row, winRowLen, c, p1, p2):
@@ -201,35 +162,56 @@ def checkRowInner(board, row, winRowLen, c, p1, p2):
     return currRow;
 
 
+def checkColumn(board, col, win, p1Turn):
+    score = 0;
+    winColLen = 4;
+    p1 = 1;
+    p2 = 2;
+
+    currCol = 0;
+    for r in range(0, board.height - winColLen + 1):
+        if(p1Turn):
+            currCol = checkColInner(board, col, winColLen, r, p1, p2)
+        else:
+            currCol = checkColInner(board, col, winColLen, r, p2, p1)
+        if(currCol == winColLen):
+            return win;
+        score += currCol;
+
+    return score;
+    
+
+def checkColInner(board, col, winColLen, r, p1, p2):
+    currCol = 0;
+    for row in range(r, r + winColLen):
+        if(board.get_cell_value(row, col) == p1):
+            currCol +=1;
+        else:
+            if(board.get_cell_value(row, col) == p2):
+                currCol = 0;
+                break;
+    return currCol;
 
 
-def normalize(x, min, max):
-    return (x - min) / max - min
+def checkFor3P1(board, p1):
+    if(checkColumnsFor3P1(board, p1)):
+        return True;
+#    else:
+ #       if(checkRowsFor3P1(board, p1)):
+  #          return True;
+   #     else:
+    #        if(checkDiagonalLRFor3P1(board, p1)):
+     #           return True;
+      #      else:
+       #         if(checkDiagonalRLFor3P1(board, p1)):
+        #            return True;
+    return False;
 
-                        
-def getPiecesInWiningRow(board, row, colOffset, p1Turn):
-            p2 = 2;
-            p1 = 1;
-            rowLen = 4;
-            rowScore = 0;
 
-            print("colOffset = ", colOffset, "board.width = ", board.width);
-            if(colOffset + rowLen > board.width):
-                return False;
-
-            if(p1Turn):
-                for col in range(colOffset, colOffset + rowLen):
-                    if(board.get_cell_value(row, col) == p2):
-                        return False;
-                    if(board.get_cell_value(row, col) == p1):
-                        rowScore += 1;
-            else:
-                for col in range(colOffset, colOffset + rowLen):
-                    if(board.get_cell_value(row, col) == p1):
-                        return False;
-                    if(board.get_cell_value(row, col) == p2):
-                        rowScore += 1;
-
-            print("rowScore = ", rowScore);
-            return rowScore;
+def checkColumnsFor3P1(board, p1):
+    for row in range(0, board.height):
+        for col in range(0, board.width -3):
+            if(board.get_cell_value(row, col) == p1 and board.get_cell_value(row, col +1) == p1 and board.get_cell_value(row, col +2) == p1):
+                return True;
+    return False;
             
