@@ -64,33 +64,64 @@ class StudentAgent(RandomAgent):
 
         p2 = 2;
         p1 = 1;
+        win = -1;
+
+
+        p1RowScore = 0;
+        p1Score = 0;
+        p2RowScore = 0;
+        p2Score = 0;
+
+        for row in range(0, board.height):
+            p1RowScore = checkRow(board, row, win, True);
+            print("p1RowScore = ", p1RowScore)
+            p1Score += p1RowScore * p1RowScore;
+        for row in range(0, board.height):
+            p2RowScore = checkRow(board, row, win, False);
+            print("p2RowScore = ", p2RowScore)
+            p2Score += p2RowScore * p2RowScore;
+
+        print()
+            
+
+        if(p1Score == win and p2Score == win):
+            print("Draw move")
+            return 0.0;
+        if(p1Score == win):
+            print("p1 win")
+            return 1;
+        if(p2Score == win):
+            print("p2 win")
+            return -1;
+
+        if(p1Score > p2Score):
+            ret = normalize(p1Score, 0.0, p1Score) - normalize(p2Score, 0.0, p1Score)
+            print("ret = ", ret)
+            return ret
+        else:
+            if(p1Score == 0 and p2Score == 0):
+                return 0;
+            else:
+                ret = normalize(p2Score, 0.0, p2Score) - normalize(p1Score, 0.0, p2Score)
+                print("ret = ", ret)
+            return ret
         
-        for row in range(0, board.height):
-            for col in range(0, board.width -2):
-                if(board.get_cell_value(row, col) == p2 and board.get_cell_value(row, col + 1) == p2):
-                    if(board.get_cell_value(row, col + 2) == p2):
-                        playerTwoTotalThreeConsecutive += 1;
-                    else:
-                        playerTwoTotalTwoConsecutive += 1;
-                
+            
+#           print(checkRow(board, row));
+ #       print();
 
-        for row in range(0, board.height):
-            for col in range(0, board.width -2):
-                if(board.get_cell_value(row, col) == p1 and board.get_cell_value(row, col + 1) == p1):
-                    print(board.get_cell_value(row, col));
-                    if(board.get_cell_value(row, col + 2) == p1):
-                        playerOneTotalThreeConsecutive += 1;
-                    else:
-                        playerOneTotalTwoConsecutive += 1;
-                            
 
-        playerTwoScore = playerTwoTotalTwoConsecutive + playerTwoTotalThreeConsecutive * 1.75;
-        playerOneScore = playerOneTotalTwoConsecutive + playerOneTotalThreeConsecutive * 1.75;
 
-        print(playerOneTotalTwoConsecutive);
-        print("two = ", playerTwoScore);
-        print("one = ", playerOneScore);
-        print();
+#        for row in range(0, board.height):
+#            for col in range(0, board.width):
+#                ret = getPiecesInWiningRow(board, row, col, True);                
+#                if(ret != False):
+#                    if(ret == 2):
+#                        playerOneTwo += ret;
+#                    else:
+#                        playerOneThree += ret;
+#                if(col >= board.width):
+#                    break;
                     
 #            	if(board.get_cell_value(row, col) == 2):
  #                   return 1.0;
@@ -128,3 +159,77 @@ class StudentAgent(RandomAgent):
         """
         return 0.5;             # 
 #        return random.uniform(0, 1)
+
+#returns false if row not a winable row
+
+
+
+def checkRow(board, row, p1Turn, win):
+    score = 0;              # If currRow == winRowLen return -1, else return score
+    winRowLen = 4;
+    p1 = 1;
+    p2 = 2;
+
+    currRow = 0;
+    for c in range(0, board.width - winRowLen + 1):
+        if(p1Turn):
+            currRow = checkRowInner(board, row, winRowLen, c, p1, p2)
+        else:
+            currRow = checkRowInner(board, row, winRowLen, c, p2, p1)
+        if(currRow == winRowLen):
+            print("currRow = ", currRow)
+            return win;    # This is a wining move!
+    score += currRow;
+
+    print("score = ", score)
+    return score;
+        
+
+            
+	
+
+def checkRowInner(board, row, winRowLen, c, p1, p2):
+    currRow = 0;
+    for col in range(c, c + winRowLen):
+        if(board.get_cell_value(row, col) == p1):
+            currRow += 1;
+        else:
+            if(board.get_cell_value(row, col) == p2):
+                currRow = 0;
+                break;
+        
+    return currRow;
+
+
+
+
+def normalize(x, min, max):
+    return (x - min) / max - min
+
+                        
+def getPiecesInWiningRow(board, row, colOffset, p1Turn):
+            p2 = 2;
+            p1 = 1;
+            rowLen = 4;
+            rowScore = 0;
+
+            print("colOffset = ", colOffset, "board.width = ", board.width);
+            if(colOffset + rowLen > board.width):
+                return False;
+
+            if(p1Turn):
+                for col in range(colOffset, colOffset + rowLen):
+                    if(board.get_cell_value(row, col) == p2):
+                        return False;
+                    if(board.get_cell_value(row, col) == p1):
+                        rowScore += 1;
+            else:
+                for col in range(colOffset, colOffset + rowLen):
+                    if(board.get_cell_value(row, col) == p1):
+                        return False;
+                    if(board.get_cell_value(row, col) == p2):
+                        rowScore += 1;
+
+            print("rowScore = ", rowScore);
+            return rowScore;
+            
